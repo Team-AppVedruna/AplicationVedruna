@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet} from "react-native";
 
-export function IncidenciasScreen() {  
+export function PerfilScreen() {  
     return (
         <View style={styles.container}>
-            <Text>Incidencias</Text>
+            <Text>Perfil de Usuario</Text>
         </View>
     );
 }

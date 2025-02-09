@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons"; // Para los íconos de la barra d
 import {HomeScreen} from "./HomeScreen.js";
 import {AddScreen} from './AddScreen';
 import {IncidenciasScreen} from './IncidenciasScreen';
+import { PerfilScreen } from "./PerfilScreen.js";
 
 
 export function TabNavegation() {
@@ -41,6 +42,15 @@ export function TabNavegation() {
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Perfil"
+        component={PerfilScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person" color={color} size={size} />
           ),
         }}
       />
