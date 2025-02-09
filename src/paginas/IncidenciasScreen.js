@@ -1,10 +1,10 @@
 import react from "react";
 import { View, Text, StyleSheet} from "react-native";
 
-export function SettingScreen() {  
+export function IncidenciasScreen() {  
     return (
         <View style={styles.container}>
-            <Text>Setting</Text>
+            <Text>Incidencias</Text>
         </View>
     );
 }
