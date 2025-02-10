@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, ActivityIndicator, TouchableOpacity, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { auth } from '../../firebase-config';
+import { useNavigation } from '@react-navigation/native';
+
 
 export function HomeScreen() {
   const [publicaciones, setPublicaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userNicknames, setUserNicknames] = useState({});
   const userId = auth.currentUser.uid;
+  const navigation = useNavigation();
 
   // Obtiene los nombres de usuario a partir de sus IDs
   const fetchUserNicknames = async (userIds) => {
@@ -31,9 +34,7 @@ export function HomeScreen() {
   // Obtiene las publicaciones desde la API y sus respectivos likes
   const fetchPublicaciones = async () => {
     try {
-
       const url = 'http://192.168.1.147:8080/proyecto01/publicaciones';
-
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Error al obtener publicaciones');
@@ -41,10 +42,7 @@ export function HomeScreen() {
 
       const data = await response.json();
 
-
       // Agrega la cantidad de likes a cada publicación
-
-
       const publicacionesConLikes = data.map(pub => ({
         ...pub,
         likes: pub.like ? pub.like.length : 0,
@@ -52,10 +50,7 @@ export function HomeScreen() {
 
       setPublicaciones(publicacionesConLikes);
 
-
       // Obtiene una lista de IDs únicos de usuarios
-
-
       const userIds = [...new Set(data.map((pub) => pub.user_id))];
       fetchUserNicknames(userIds);
     } catch (error) {
@@ -83,8 +78,6 @@ export function HomeScreen() {
       setPublicaciones(updatedPublicaciones);
 
       const url = `http://192.168.1.147:8080/proyecto01/publicaciones/put/${id}/${userId}`;
-
-
       const response = await fetch(url, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -101,6 +94,11 @@ export function HomeScreen() {
     }
   };
 
+  // Maneja la navegación a la pantalla de publicación
+  const handlePress = (publicacion) => {
+    navigation.navigate('PublicacionScreen', { publicacion });
+  };
+
   // Carga las publicaciones al montar el componente y las actualiza cada 30 segundos
   useEffect(() => {
     fetchPublicaciones();
@@ -110,7 +108,6 @@ export function HomeScreen() {
 
   return (
     <View style={styles.container}>
-
       <View style={styles.header}>
         <Image source={require('../img/vedrunaLogo.png')} style={styles.logo} />
         <Text style={styles.logoText}>VEDRUNA</Text>
@@ -123,11 +120,9 @@ export function HomeScreen() {
           contentContainerStyle={styles.imageContainer}
           data={publicaciones}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => {
-            const currentLikes = item.like || [];
-            return (
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handlePress(item)}>
               <View style={styles.card}>
-
                 <View style={styles.imageContainerWithText}>
                   <View style={styles.userContainer}>
                     <View style={styles.userImageContainer}>
@@ -150,10 +145,10 @@ export function HomeScreen() {
                 <View style={styles.likeContainer}>
                   <TouchableOpacity onPress={() => handleLike(item.id)}>
                     <Icon
-                      name={currentLikes.includes(userId) ? 'heart' : 'heart-o'}
+                      name={item.like && item.like.includes(userId) ? 'heart' : 'heart-o'}
                       size={25}
                       color={
-                        currentLikes.includes(userId)
+                        item.like && item.like.includes(userId)
                           ? item.user_id === userId
                             ? '#b3ff00'
                             : '#ffffff'
@@ -166,8 +161,8 @@ export function HomeScreen() {
                 <Text style={styles.title}>{item.titulo}</Text>
                 <Text style={styles.description}>{item.comentario}</Text>
               </View>
-            );
-          }}
+            </TouchableOpacity>
+          )}
         />
       )}
     </View>
