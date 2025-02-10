@@ -2,12 +2,26 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+const timeAgo = (date) => {
+  const now = new Date();
+  const diff = now - new Date(date);
+
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (days > 0) return `Hace ${days} día${days > 1 ? 's' : ''}`;
+  if (hours > 0) return `Hace ${hours} hora${hours > 1 ? 's' : ''}`;
+  if (minutes > 0) return `Hace ${minutes} minuto${minutes > 1 ? 's' : ''}`;
+  return `Hace ${seconds} segundo${seconds > 1 ? 's' : ''}`;
+};
+
 export function PublicacionScreen({ navigation, route }) {
-  const { publicacion } = route.params; // Obtenemos los datos de la publicación
+  const { publicacion } = route.params;
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="arrow-left" size={25} color="#9FC63B" />
@@ -21,35 +35,25 @@ export function PublicacionScreen({ navigation, route }) {
         </View>
       </View>
 
-      {/* Publicación */}
       <View style={styles.publicacionContainer}>
-        {/* Imagen de la publicación */}
         {publicacion.image_url && (
           <View style={styles.imageContainer}>
             <Image
               source={{ uri: publicacion.image_url }}
               style={styles.image}
-              onError={(e) => console.log('Error al cargar la imagen:', e.nativeEvent.error)}
             />
           </View>
         )}
 
-        {/* Contenedor de información (likes, título, descripción, etc.) */}
         <View style={styles.textContainer}>
-          {/* Likes */}
           <View style={styles.likeContainer}>
             <Icon name="heart-o" size={18} color="#9FC63B" />
             <Text style={styles.likeText}>{publicacion.likes || 0} Me gusta</Text>
           </View>
 
-          {/* Título */}
           <Text style={styles.title}>{publicacion.titulo}</Text>
-
-          {/* Descripción */}
           <Text style={styles.description}>{publicacion.comentario}</Text>
-
-          {/* Fecha */}
-          <Text style={styles.date}>Hace 4 días</Text>
+          <Text style={styles.date}>{timeAgo(publicacion.createdAt)}</Text>
         </View>
       </View>
     </View>
@@ -91,10 +95,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   publicacionContainer: {
-    alignItems: 'center', // Centrado de todo el contenedor
+    alignItems: 'center',
   },
   imageContainer: {
-    marginBottom: 20, // Espacio debajo de la imagen
+    marginBottom: 20,
   },
   image: {
     width: 400,
@@ -102,8 +106,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   textContainer: {
-    alignItems: 'flex-start', // Alineación a la izquierda para los elementos textuales
-    width: '100%', // Para que ocupe todo el ancho disponible
+    alignItems: 'flex-start',
+    width: '100%',
   },
   likeContainer: {
     flexDirection: 'row',
