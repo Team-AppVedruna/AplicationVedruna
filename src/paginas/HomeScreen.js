@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   image: {
-    width: 360,
+    width: 400,
     height: 350,
   },
   card: {
@@ -252,13 +252,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignSelf: 'flex-start',
     marginLeft: 20,
-
+    paddingTop: 10,
   },
   description: {
     color: '#cccccc',
-    fontSize: 18,
+    fontSize: 14,
     alignSelf: 'flex-start',
     marginLeft: 20,
+    paddingBottom: 80,
   },
   likeContainer: {
     flexDirection: 'row',
