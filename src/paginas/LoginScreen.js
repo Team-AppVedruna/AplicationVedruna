@@ -26,7 +26,7 @@ export function LoginScreen({ navigation }) {
       {/* Sección del Logo */}
       <View style={styles.logoSection}>
         <Image
-          source={require('../img/logoVedruna.png')}
+          source={require('../../assets/logoVedruna.png')}
           style={styles.logo}
         />
       </View>
@@ -88,6 +88,7 @@ const styles = StyleSheet.create({
   logoSection: {
     marginTop: 0,
     marginBottom: 20,
+    paddingTop: 40,
   },
   logo: {
     width: 200,
@@ -155,6 +156,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: 10,
   },
   createAccount: {
     color: '#DFDFDF',

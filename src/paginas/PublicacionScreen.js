@@ -13,7 +13,7 @@ export function PublicacionScreen({ navigation, route }) {
           <Icon name="arrow-left" size={25} color="#9FC63B" />
         </TouchableOpacity>
         <View style={styles.userInfo}>
-          <Image source={require('../img/avatar.png')} style={styles.avatar} />
+          <Image source={require('../../assets/avatar.png')} style={styles.avatar} />
           <View>
             <Text style={styles.publishedBy}>Publicado por</Text>
             <Text style={styles.userName}>{publicacion.nick}</Text>
@@ -76,8 +76,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatar: {
-    width: 75,
-    height: 75,
+    width: 70,
+    height: 70,
     borderRadius: 25,
     marginRight: 10,
   },

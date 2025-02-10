@@ -70,7 +70,7 @@ export function RegisterScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.imagePlaceholder}>
           <Image
-            source={require('../img/formulario 1.png')}
+            source={require('../../assets/formulario 1.png')}
             style={styles.image}
           />
         </View>
