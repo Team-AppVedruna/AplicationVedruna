@@ -4,7 +4,7 @@ import { View, Text, StyleSheet} from "react-native";
 export function IncidenciasScreen() {  
     return (
         <View style={styles.container}>
-            <Text>Incidencias</Text>
+            <Text>Página de Incidencias</Text>
         </View>
     );
 }
