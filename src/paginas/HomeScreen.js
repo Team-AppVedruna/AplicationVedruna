@@ -94,16 +94,18 @@ export function HomeScreen() {
     }
   };
 
-  // Maneja la navegación a la pantalla de publicación
+  
   // Maneja la navegación a la pantalla de publicación
   const handlePress = (publicacion) => {
     const publicacionConNick = {
       ...publicacion,
       nick: userNicknames[publicacion.user_id] || 'Desconocido',
     };
-    navigation.navigate('PublicacionScreen', { publicacion: publicacionConNick });
+    navigation.navigate('PublicacionScreen', { 
+      publicacion: publicacionConNick,
+      onLikeUpdate: handleLike // Pasar la función de actualización
+    });
   };
-
 
   // Carga las publicaciones al montar el componente y las actualiza cada 30 segundos
   useEffect(() => {

@@ -19,8 +19,8 @@ const timeAgo = (date) => {
 };
 
 export function PublicacionScreen({ navigation, route }) {
-  const { publicacion } = route.params;
-  const userId = auth.currentUser.uid;
+  const { publicacion, onLikeUpdate } = route.params; // Obtener la función de actualización
+  const userId = auth.currentUser .uid;
   const [likes, setLikes] = useState(publicacion.likes || 0);
   const [liked, setLiked] = useState(publicacion.like?.includes(userId) || false);
 
@@ -31,6 +31,11 @@ export function PublicacionScreen({ navigation, route }) {
 
       setLiked(newLikedStatus);
       setLikes(updatedLikes);
+
+      // Actualizar el estado en HomeScreen
+      if (onLikeUpdate) {
+        onLikeUpdate(publicacion.id); // Llamar a la función de actualización
+      }
 
       const url = `http://192.168.1.147:8080/proyecto01/publicaciones/put/${publicacion.id}/${userId}`;
       const response = await fetch(url, {
