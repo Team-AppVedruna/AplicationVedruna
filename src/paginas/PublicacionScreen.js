@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { auth } from '../../firebase-config';
 
 const timeAgo = (date) => {
   const now = new Date();
@@ -19,6 +20,36 @@ const timeAgo = (date) => {
 
 export function PublicacionScreen({ navigation, route }) {
   const { publicacion } = route.params;
+  const userId = auth.currentUser.uid;
+  const [likes, setLikes] = useState(publicacion.likes || 0);
+  const [liked, setLiked] = useState(publicacion.like?.includes(userId) || false);
+
+  const handleLike = async () => {
+    try {
+      const newLikedStatus = !liked;
+      const updatedLikes = newLikedStatus ? likes + 1 : likes - 1;
+
+      setLiked(newLikedStatus);
+      setLikes(updatedLikes);
+
+      const url = `http://192.168.1.147:8080/proyecto01/publicaciones/put/${publicacion.id}/${userId}`;
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          like: newLikedStatus
+            ? [...(publicacion.like || []), userId]
+            : (publicacion.like || []).filter(uid => uid !== userId),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar el like');
+      }
+    } catch (error) {
+      console.error('Error al actualizar el like:', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -38,17 +69,16 @@ export function PublicacionScreen({ navigation, route }) {
       <View style={styles.publicacionContainer}>
         {publicacion.image_url && (
           <View style={styles.imageContainer}>
-            <Image
-              source={{ uri: publicacion.image_url }}
-              style={styles.image}
-            />
+            <Image source={{ uri: publicacion.image_url }} style={styles.image} />
           </View>
         )}
 
         <View style={styles.textContainer}>
           <View style={styles.likeContainer}>
-            <Icon name="heart-o" size={18} color="#9FC63B" />
-            <Text style={styles.likeText}>{publicacion.likes || 0} Me gusta</Text>
+            <TouchableOpacity onPress={handleLike}>
+              <Icon name={liked ? 'heart' : 'heart-o'} size={18} color="#9FC63B" />
+            </TouchableOpacity>
+            <Text style={styles.likeText}>{likes} Me gusta</Text>
           </View>
 
           <Text style={styles.title}>{publicacion.titulo}</Text>
