@@ -7,15 +7,27 @@ export function IncidenciasScreen() {
   const [incidencias, setIncidencias] = useState([]);
   const navigation = useNavigation();
 
- 
-  useEffect(() => {
-    fetch('http://192.168.1.38:8080/proyecto01/tickets')
+  const fetchIncidencias = () => {
+    fetch('http://192.168.1.150:8080/proyecto01/tickets')
       .then(res => res.json())
       .then(data => setIncidencias(data))
       .catch(err => {
         console.error('Error al obtener incidencias:', err);
         Alert.alert('Error', 'Hubo un problema al cargar las incidencias');
       });
+  };
+
+  useEffect(() => {
+    // Cargar incidencias al iniciar
+    fetchIncidencias();
+
+    // Configurar intervalo para recargar cada 10 segundos
+    const intervalId = setInterval(() => {
+      fetchIncidencias();
+    }, 10000); // 10000 ms = 10 segundos
+
+    // Limpiar el intervalo al desmontar el componente
+    return () => clearInterval(intervalId);
   }, []); 
 
   return (
@@ -23,7 +35,7 @@ export function IncidenciasScreen() {
       <Text style={styles.header}>INCIDENCIAS</Text>
       <FlatList
         data={incidencias}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()} // Asegúrate de convertir a string
         renderItem={({ item }) => (
           <View style={styles.card}>
             <Text style={styles.title}>{item.titulo}</Text>
