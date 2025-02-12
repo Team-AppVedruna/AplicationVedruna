@@ -13,9 +13,10 @@ export function TabNavegation() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: { backgroundColor: "#23272A" },
+        tabBarStyle: { backgroundColor: "#23272A", height: 60, borderTopWidth: 0,},
         tabBarActiveTintColor: "#9FC63B",
         tabBarInactiveTintColor: "#aaa",
+        tabBarLabelStyle: { fontSize: 12 },
       }}
     >
       <Tab.Screen

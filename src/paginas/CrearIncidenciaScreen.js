@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
     color: '#A3C567',
     textAlign: 'center',
     marginBottom: 20,
+    paddingTop: 30,
   },
   imageContainer: {
     alignItems: 'center',
@@ -141,12 +142,14 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: 'transparent',
-    borderColor: '#A3C567',
-    borderWidth: 1,
-    padding: 10,
-    alignItems: 'center',
-    borderRadius: 5,
-    marginTop: 20,
+  borderColor: '#A3C567',
+  borderWidth: 1,
+  padding: 10,
+  alignItems: 'center',
+  borderRadius: 5,
+  marginTop: 20,
+  alignSelf: 'center',
+  width: '50%',
   },
   buttonText: {
     color: '#A3C567',
