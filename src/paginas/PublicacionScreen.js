@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Modal, TextInput, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Modal, TextInput, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { auth } from '../../firebase-config';
 
@@ -27,20 +27,24 @@ export function PublicacionScreen({ navigation, route }) {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [newComment, setNewComment] = useState('');
+  const { selectedPostId } = route.params;
 
   useEffect(() => {
     fetchComentarios();
-  }, []);
+  }, [selectedPostId]);
 
   const fetchComentarios = async () => {
     try {
-      const url = `http://192.168.1.147:8080/proyecto01/comentarios/${publicacion.id}`;
+      setLoading(true);
+      const url = `http://192.168.1.147:8080/proyecto01/comentarios/${selectedPostId}`;
       const response = await fetch(url);
       if (!response.ok) {
-        throw new Error('Error al obtener comentarios');
+        const errorMessage = `Error ${response.status}: ${response.statusText}`;
+        throw new Error(errorMessage);
       }
+  
       const data = await response.json();
-      setComentarios(data || []);
+      setComentarios(data);
     } catch (error) {
       console.error('Error al obtener comentarios:', error);
     } finally {
@@ -99,14 +103,12 @@ export function PublicacionScreen({ navigation, route }) {
         throw new Error('Error al publicar el comentario');
       }
 
-      // Agregar el nuevo comentario a la lista sin necesidad de volver a fetch
       setComentarios((prev) => [
         ...prev,
         { id: Date.now(), user: 'Tú', texto: newComment },
       ]);
       setNewComment('');
       setModalVisible(false);
-      // Puedes volver a llamar a fetchComentarios si deseas actualizar
       fetchComentarios(); // Actualiza la lista de comentarios
     } catch (error) {
       console.error('Error:', error);
@@ -114,7 +116,7 @@ export function PublicacionScreen({ navigation, route }) {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="arrow-left" size={25} color="#9FC63B" />
@@ -147,25 +149,21 @@ export function PublicacionScreen({ navigation, route }) {
           <Text style={styles.description}>{publicacion.comentario}</Text>
           <Text style={styles.date}>{timeAgo(publicacion.createdAt)}</Text>
 
-          {/* Título de comentarios */}
           <Text style={styles.commentsTitle}>COMENTARIOS</Text>
 
-          {/* Mostrar comentarios */}
-          {loading ? (
-            <ActivityIndicator size="large" color="#ffffff" />
-          ) : (
-            <FlatList
-              data={comentarios}
-              renderItem={({ item }) => (
-                <View style={styles.commentContainer}>
-                  <Text style={styles.commentUser}>{item.user}</Text>
-                  <Text style={styles.commentText}>{item.texto}</Text>
-                </View>
-              )}
-              keyExtractor={(item) => item.id.toString()}
-              ListEmptyComponent={<Text style={styles.noComments}>No hay comentarios aún.</Text>}
-            />
-          )}
+          <FlatList
+            data={comentarios}
+            renderItem={({ item }) => (
+              <View style={styles.commentContainer}>
+                <Text style={styles.commentUser}>{item.user}</Text>
+                <Text style={styles.commentText}>{item.texto}</Text>
+              </View>
+            )}
+            keyExtractor={(item) => item.id.toString()}
+            ListEmptyComponent={<Text style={styles.noComments}>No hay comentarios aún.</Text>}
+            refreshing={loading}
+            onRefresh={fetchComentarios}
+          />
         </View>
       </View>
 
@@ -205,7 +203,7 @@ export function PublicacionScreen({ navigation, route }) {
           </View>
         </View>
       </Modal>
-    </ScrollView>
+    </View>
   );
 }
 
