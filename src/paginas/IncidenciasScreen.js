@@ -9,7 +9,7 @@ export function IncidenciasScreen() {
   const navigation = useNavigation();
 
   const fetchIncidencias = () => {
-    fetch('http://192.168.1.38:8080/proyecto01/tickets')
+    fetch('http://192.168.1.150:8080/proyecto01/tickets')
       .then(res => res.json())
       .then(data => setIncidencias(data))
       .catch(err => {

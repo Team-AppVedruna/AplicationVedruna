@@ -22,7 +22,7 @@ export function CrearIncidenciaScreen() {
       descripcion: descripcion,
     };
 
-    fetch('http://192.168.1.38:8080/proyecto01/tickets', {
+    fetch('http://192.168.1.150:8080/proyecto01/tickets', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
