@@ -24,6 +24,19 @@ export function AddScreen() {
     return () => authListener();
   }, []);
 
+  // Permite al usuario elegir entre cámara o galería
+  const choosePhoto = async () => {
+    const action = await Alert.alert(
+      'Seleccionar foto',
+      '¿Quieres tomar una foto o elegirla desde la galería?',
+      [
+        { text: 'Cámara', onPress: capturePhoto },
+        { text: 'Galería', onPress: pickImageFromGallery },
+        { text: 'Cancelar', style: 'cancel' },
+      ]
+    );
+  };
+
   // Captura una foto utilizando la cámara del dispositivo
   const capturePhoto = async () => {
     const permissionResponse = await ImagePicker.requestCameraPermissionsAsync();
@@ -47,6 +60,34 @@ export function AddScreen() {
     if (imageUri) {
       setPhotoUri(imageUri);
       console.log("Foto tomada:", imageUri);
+    } else {
+      console.log("No se pudo obtener la URI de la imagen.");
+    }
+  };
+
+  // Elige una imagen desde la galería
+  const pickImageFromGallery = async () => {
+    const permissionResponse = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResponse.granted) {
+      Alert.alert("Permiso denegado", "Es necesario permitir el acceso a la galería");
+      return;
+    }
+
+    const imageResult = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (imageResult.canceled) {
+      console.log("La selección de imagen fue cancelada.");
+      return;
+    }
+
+    const imageUri = imageResult.assets?.[0]?.uri;
+    if (imageUri) {
+      setPhotoUri(imageUri);
+      console.log("Imagen seleccionada:", imageUri);
     } else {
       console.log("No se pudo obtener la URI de la imagen.");
     }
@@ -162,7 +203,7 @@ export function AddScreen() {
       <View style={styles.container}>
         <Text style={styles.title}>PUBLICACIÓN</Text>
 
-        <TouchableOpacity style={styles.imageContainer} onPress={capturePhoto}>
+        <TouchableOpacity style={styles.imageContainer} onPress={choosePhoto}>
           {photoUri ? (
             <Image source={{ uri: photoUri }} style={styles.image} />
           ) : (
@@ -198,7 +239,6 @@ export function AddScreen() {
     </ScrollView>
   );
 };
-
 
 const styles = StyleSheet.create({
   scrollContainer: {

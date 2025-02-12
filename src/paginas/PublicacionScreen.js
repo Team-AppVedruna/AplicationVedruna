@@ -37,6 +37,7 @@ export function PublicacionScreen({ navigation, route }) {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [newComment, setNewComment] = useState('');
+  const [userNicknames, setUserNicknames] = useState({}); // Estado para nicknames
 
   useEffect(() => {
     fetchComentarios();
@@ -50,11 +51,33 @@ export function PublicacionScreen({ navigation, route }) {
       if (!response.ok) throw new Error('Error al obtener comentarios');
       const data = await response.json();
       setComentarios(data);
+
+      // Extraer los IDs de los usuarios que comentaron
+      const userIds = [...new Set(data.map(comment => comment.user_id))];
+      fetchUserNicknames(userIds); // Llamar para obtener los nicknames
     } catch (error) {
       console.error('Error:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchUserNicknames = async (userIds) => {
+    try {
+      const response = await fetch('http://192.168.1.147:8080/proyecto01/users/name');
+      const usersData = await response.json();
+
+      const userNicknameMap = {};
+      usersData.forEach(user => {
+        if (userIds.includes(user.user_id)) {
+          userNicknameMap[user.user_id] = user.nick;
+        }
+      });
+
+      setUserNicknames(userNicknameMap);
+    } catch (error) {
+      console.error('Error al obtener los nicknames de los usuarios:', error);
+    } 
   };
 
   const handleLike = async () => {
@@ -137,9 +160,10 @@ export function PublicacionScreen({ navigation, route }) {
         }
         renderItem={({ item }) => (
           <View style={styles.commentContainer}>
-            <Text style={styles.commentUser}>{item.user_id}</Text>
+            <Text style={styles.commentUser}>{userNicknames[item.user_id] || item.user_id}</Text>
             <Text style={styles.commentText}>{item.comentario}</Text>
-            <Text style={styles.commentTime}>{timeAgo(new Date(item.createdAt))}</Text>
+            {/* Eliminar la línea de tiempo */}
+            {/* <Text style={styles.commentTime}>{timeAgo(new Date(item.createdAt))}</Text> */}
           </View>
         )}
         ListEmptyComponent={<Text style={styles.noComments}>No hay comentarios aún.</Text>}
@@ -213,9 +237,6 @@ const styles = StyleSheet.create({
     color: '#9FC63B',
     fontWeight: 'bold',
   },
-  publicacionContainer: {
-    alignItems: 'center',
-  },
   imageContainer: {
     marginBottom: 20,
   },
@@ -281,11 +302,6 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     textAlign: 'center',
     marginTop: 10,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   floatingButton: {
     position: 'absolute',

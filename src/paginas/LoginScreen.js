@@ -1,14 +1,27 @@
 // LoginScreen.js
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { app } from '../../firebase-config';
 
 export function LoginScreen({ navigation }) {
-  
+
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const auth = getAuth(app);
+
+  // Maneja los errores de inicio de sesión
+  const handleSignInError = (error) => {
+    if (error.code === 'auth/invalid-email') {
+      Alert.alert("Error", "El correo electrónico no es válido.");
+    } else if (error.code === 'auth/user-not-found') {
+      Alert.alert("Error", "No se encontró un usuario con ese correo.");
+    } else if (error.code === 'auth/wrong-password') {
+      Alert.alert("Error", "La contraseña es incorrecta.");
+    } else {
+      Alert.alert("Error", "Hubo un problema al iniciar sesión. Inténtalo nuevamente.");
+    }
+  };
 
   const handleSingIn = () => {
     signInWithEmailAndPassword(auth, email, password)
@@ -18,6 +31,7 @@ export function LoginScreen({ navigation }) {
       })
       .catch((error) => {
         console.log('Error al iniciar sesión:', error);
+        handleSignInError(error); // Muestra la alerta con el error específico
       });
   };
 
