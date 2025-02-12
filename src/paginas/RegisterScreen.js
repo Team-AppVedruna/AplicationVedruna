@@ -53,7 +53,7 @@ export function RegisterScreen({ navigation }) {
       });
 
       if (response.ok) {
-        Alert.alert('Registro exitoso', 'Usuario creado correctamente en Firebase y MongoDB');
+        Alert.alert('Registro exitoso', 'Usuario creado correctamente');
         navigation.navigate('Login');
       } else {
         const errorData = await response.json();
@@ -70,7 +70,7 @@ export function RegisterScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.imagePlaceholder}>
           <Image
-            source={require('../img/formulario 1.png')}
+            source={require('../../assets/formulario 1.png')}
             style={styles.image}
           />
         </View>

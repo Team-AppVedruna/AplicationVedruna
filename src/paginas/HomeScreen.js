@@ -94,9 +94,18 @@ export function HomeScreen() {
     }
   };
 
+  
   // Maneja la navegación a la pantalla de publicación
   const handlePress = (publicacion) => {
-    navigation.navigate('PublicacionScreen', { publicacion });
+    const publicacionConNick = {
+      ...publicacion,
+      nick: userNicknames[publicacion.user_id] || 'Desconocido',
+    };
+    navigation.navigate('PublicacionScreen', { 
+      publicacion: publicacionConNick,
+      onLikeUpdate: handleLike,
+      selectedPostId: publicacionConNick.id // Pasa el id de la publicación
+    });
   };
 
   // Carga las publicaciones al montar el componente y las actualiza cada 30 segundos
@@ -109,7 +118,7 @@ export function HomeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image source={require('../img/vedrunaLogo.png')} style={styles.logo} />
+        <Image source={require('../../assets/vedrunaLogo.png')} style={styles.logo} />
         <Text style={styles.logoText}>VEDRUNA</Text>
       </View>
 
@@ -126,7 +135,7 @@ export function HomeScreen() {
                 <View style={styles.imageContainerWithText}>
                   <View style={styles.userContainer}>
                     <View style={styles.userImageContainer}>
-                      <Image source={require('../img/avatar.png')} style={{ width: 60, height: 60 }} />
+                      <Image source={require('../../assets/avatar.png')} style={{ width: 60, height: 60 }} />
                     </View>
                     <View style={styles.userNameText}>
                       <Text style={styles.userText}>Publicado por</Text>
