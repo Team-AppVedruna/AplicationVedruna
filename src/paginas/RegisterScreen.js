@@ -53,7 +53,7 @@ export function RegisterScreen({ navigation }) {
       });
 
       if (response.ok) {
-        Alert.alert('Registro exitoso', 'Usuario creado correctamente en Firebase y MongoDB');
+        Alert.alert('Registro exitoso', 'Usuario creado correctamente');
         navigation.navigate('Login');
       } else {
         const errorData = await response.json();
