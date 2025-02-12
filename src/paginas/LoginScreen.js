@@ -88,6 +88,7 @@ const styles = StyleSheet.create({
   logoSection: {
     marginTop: 0,
     marginBottom: 20,
+    marginTop: 30,
   },
   logo: {
     width: 200,
@@ -120,6 +121,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'right',
     marginBottom: 20,
+    marginTop: 20,
   },
   buttonSection: {
     width: '80%',
