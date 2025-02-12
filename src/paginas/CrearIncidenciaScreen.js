@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export function CrearIncidenciaScreen() {
   const [equipo, setEquipo] = useState('');
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
+  const navigation = useNavigation();
 
   const enviarIncidencia = () => {
+    // Validar si todos los campos están llenos
+    if (!equipo || !titulo || !descripcion) {
+      Alert.alert('Error', 'Por favor, rellene todos los campos.');
+      return; // Salir de la función si algún campo está vacío
+    }
+
     const incidenciaData = {
       equipo: equipo,
       titulo: titulo,
@@ -25,6 +33,7 @@ export function CrearIncidenciaScreen() {
         console.log('Incidencia enviada:', data);
         // Muestra un mensaje de éxito
         Alert.alert('Éxito', 'La incidencia fue enviada correctamente');
+        navigation.goBack();                
       })
       .catch((err) => {
         console.error('Error al enviar incidencia:', err);
