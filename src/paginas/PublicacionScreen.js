@@ -152,7 +152,7 @@ export function PublicacionScreen({ navigation, route }) {
 
               <Text style={styles.title}>{publicacion.titulo}</Text>
               <Text style={styles.description}>{publicacion.comentario}</Text>
-              <Text style={styles.date}>{timeAgo(new Date(publicacion.createdAt))}</Text>
+              <Text style={styles.date}>Hace {timeAgo(new Date(publicacion.createdAt))}</Text>
 
               <Text style={styles.commentsTitle}>COMENTARIOS</Text>
             </View>
@@ -171,9 +171,12 @@ export function PublicacionScreen({ navigation, route }) {
         onRefresh={fetchComentarios}
       />
 
-      <TouchableOpacity style={styles.floatingButton} onPress={() => setModalVisible(true)}>
-        <Icon name="comment" size={30} color="#9FC63B" />
+      <TouchableOpacity style={[styles.floatingButton, { width: 60, height: 60, bottom: 30, right: 30 }]} onPress={() => setModalVisible(true)}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Icon name="comment" size={30} color="#23272A" />
+        </View>
       </TouchableOpacity>
+
 
       <Modal animationType="slide" transparent visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalContainer}>
@@ -281,6 +284,7 @@ const styles = StyleSheet.create({
     color: '#9FC63B',
     fontWeight: 'bold',
     marginTop: 20,
+    paddingBottom: 20,
   },
   commentContainer: {
     marginBottom: 15,

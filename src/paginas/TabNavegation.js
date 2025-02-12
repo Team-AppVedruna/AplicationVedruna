@@ -7,16 +7,16 @@ import {IncidenciasScreen} from './IncidenciasScreen';
 import { PerfilScreen } from "./PerfilScreen.js";
 
 
-
 export function TabNavegation() {
   const Tab = createBottomTabNavigator();
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: { backgroundColor: "#282828" },
-        tabBarActiveTintColor: "#ffffff",
+        tabBarStyle: { backgroundColor: "#23272A", height: 60, borderTopWidth: 0,},
+        tabBarActiveTintColor: "#9FC63B",
         tabBarInactiveTintColor: "#aaa",
+        tabBarLabelStyle: { fontSize: 12 },
       }}
     >
       <Tab.Screen

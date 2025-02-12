@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import emailjs from 'emailjs-com';
 
 export function CrearIncidenciaScreen() {
   const [equipo, setEquipo] = useState('');
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
+  const navigation = useNavigation();
 
   const enviarIncidencia = () => {
+    // Validar si todos los campos están llenos
+    if (!equipo || !titulo || !descripcion) {
+      Alert.alert('Error', 'Por favor, rellene todos los campos.');
+      return; // Salir de la función si algún campo está vacío
+    }
+
     const incidenciaData = {
       equipo: equipo,
       titulo: titulo,
@@ -25,13 +34,34 @@ export function CrearIncidenciaScreen() {
         console.log('Incidencia enviada:', data);
         // Muestra un mensaje de éxito
         Alert.alert('Éxito', 'La incidencia fue enviada correctamente');
+        enviarEmail(incidenciaData);
+        navigation.goBack();                
       })
+      
       .catch((err) => {
         console.error('Error al enviar incidencia:', err);
         // Muestra un mensaje de error
         Alert.alert('Error', 'Hubo un error al enviar la incidencia');
       });
   };
+  const enviarEmail = (incidenciaData) => {
+    const templateParams = {
+      equipo: incidenciaData.equipo || "No especificado",
+      titulo: incidenciaData.titulo || "Sin título",
+      descripcion: incidenciaData.descripcion || "Sin descripción",
+    };
+  
+    emailjs.send('service_bpzmje8', 'template_b81ub1h', templateParams, 'ama_scebD4nY9cr_p')
+      .then((response) => {
+        console.log('Correo enviado:', response.status, response.text);
+        Alert.alert('Éxito', 'Correo enviado correctamente');
+      })
+      .catch((err) => {
+        console.error('Error al enviar correo:', err);
+        Alert.alert('Error', 'Hubo un error al enviar el correo');
+      });
+  };
+
 
   return (
     <View style={styles.container}>
@@ -83,6 +113,7 @@ const styles = StyleSheet.create({
     color: '#A3C567',
     textAlign: 'center',
     marginBottom: 20,
+    paddingTop: 30,
   },
   imageContainer: {
     alignItems: 'center',
@@ -111,12 +142,14 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: 'transparent',
-    borderColor: '#A3C567',
-    borderWidth: 1,
-    padding: 10,
-    alignItems: 'center',
-    borderRadius: 5,
-    marginTop: 20,
+  borderColor: '#A3C567',
+  borderWidth: 1,
+  padding: 10,
+  alignItems: 'center',
+  borderRadius: 5,
+  marginTop: 20,
+  alignSelf: 'center',
+  width: '50%',
   },
   buttonText: {
     color: '#A3C567',

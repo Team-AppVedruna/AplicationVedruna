@@ -39,7 +39,7 @@ export function IncidenciasScreen() {
         renderItem={({ item }) => (
           <View style={styles.card}>
             <Text style={styles.title}>{item.titulo}</Text>
-            <Text style={[styles.estado, { color: item.color || '#9FC63B' }]}>
+            <Text style={[styles.estado, { color: item.color || '#FFA500' }]}>
               {item.estado || 'PENDIENTE'}
             </Text>
           </View>
@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     color: '#9FC63B',
     textAlign: 'center',
     marginBottom: 20,
+    paddingTop: 30,
   },
   card: {
     backgroundColor: '#323639',
