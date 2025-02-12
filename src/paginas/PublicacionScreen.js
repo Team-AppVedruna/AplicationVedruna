@@ -3,6 +3,31 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Modal, TextI
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { auth } from '../../firebase-config';
 
+const timeAgo = (date) => {
+  const seconds = Math.floor((new Date() - date) / 1000);
+  let interval = Math.floor(seconds / 31536000);
+  if (interval >= 1) {
+    return interval + ' año' + (interval > 1 ? 's' : '');
+  }
+  interval = Math.floor(seconds / 2592000);
+  if (interval >= 1) {
+    return interval + ' mes' + (interval > 1 ? 'es' : '');
+  }
+  interval = Math.floor(seconds / 86400);
+  if (interval >= 1) {
+    return interval + ' día' + (interval > 1 ? 's' : '');
+  }
+  interval = Math.floor(seconds / 3600);
+  if (interval >= 1) {
+    return interval + ' hora' + (interval > 1 ? 's' : '');
+  }
+  interval = Math.floor(seconds / 60);
+  if (interval >= 1) {
+    return interval + ' minuto' + (interval > 1 ? 's' : '');
+  }
+  return Math.floor(seconds) + ' segundo' + (Math.floor(seconds) !== 1 ? 's' : '');
+};
+
 export function PublicacionScreen({ navigation, route }) {
   const { publicacion, onLikeUpdate, selectedPostId } = route.params;
   const userId = auth.currentUser.uid;
@@ -104,7 +129,7 @@ export function PublicacionScreen({ navigation, route }) {
 
               <Text style={styles.title}>{publicacion.titulo}</Text>
               <Text style={styles.description}>{publicacion.comentario}</Text>
-              <Text style={styles.date}>{publicacion.createdAt}</Text>
+              <Text style={styles.date}>{timeAgo(new Date(publicacion.createdAt))}</Text>
 
               <Text style={styles.commentsTitle}>COMENTARIOS</Text>
             </View>
@@ -114,6 +139,7 @@ export function PublicacionScreen({ navigation, route }) {
           <View style={styles.commentContainer}>
             <Text style={styles.commentUser}>{item.user_id}</Text>
             <Text style={styles.commentText}>{item.comentario}</Text>
+            <Text style={styles.commentTime}>{timeAgo(new Date(item.createdAt))}</Text>
           </View>
         )}
         ListEmptyComponent={<Text style={styles.noComments}>No hay comentarios aún.</Text>}
