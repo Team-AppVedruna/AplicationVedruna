@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Modal, TextInput, ActivityIndicator, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { auth } from '../../firebase-config';
 
@@ -19,10 +19,34 @@ const timeAgo = (date) => {
 };
 
 export function PublicacionScreen({ navigation, route }) {
-  const { publicacion, onLikeUpdate } = route.params; // Obtener la función de actualización
-  const userId = auth.currentUser .uid;
+  const { publicacion, onLikeUpdate } = route.params;
+  const userId = auth.currentUser.uid;
   const [likes, setLikes] = useState(publicacion.likes || 0);
   const [liked, setLiked] = useState(publicacion.like?.includes(userId) || false);
+  const [comentarios, setComentarios] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [newComment, setNewComment] = useState('');
+
+  useEffect(() => {
+    fetchComentarios();
+  }, []);
+
+  const fetchComentarios = async () => {
+    try {
+      const url = `http://192.168.1.147:8080/proyecto01/comentarios/${publicacion.id}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Error al obtener comentarios');
+      }
+      const data = await response.json();
+      setComentarios(data || []);
+    } catch (error) {
+      console.error('Error al obtener comentarios:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLike = async () => {
     try {
@@ -32,9 +56,8 @@ export function PublicacionScreen({ navigation, route }) {
       setLiked(newLikedStatus);
       setLikes(updatedLikes);
 
-      // Actualizar el estado en HomeScreen
       if (onLikeUpdate) {
-        onLikeUpdate(publicacion.id); // Llamar a la función de actualización
+        onLikeUpdate(publicacion.id);
       }
 
       const url = `http://192.168.1.147:8080/proyecto01/publicaciones/put/${publicacion.id}/${userId}`;
@@ -56,8 +79,42 @@ export function PublicacionScreen({ navigation, route }) {
     }
   };
 
+  const handlePublishComment = async () => {
+    if (newComment.trim() === '') return;
+
+    try {
+      const response = await fetch('http://192.168.1.147:8080/proyecto01/comentarios/put', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          idPublicacion: publicacion.id,
+          comentario: newComment,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al publicar el comentario');
+      }
+
+      // Agregar el nuevo comentario a la lista sin necesidad de volver a fetch
+      setComentarios((prev) => [
+        ...prev,
+        { id: Date.now(), user: 'Tú', texto: newComment },
+      ]);
+      setNewComment('');
+      setModalVisible(false);
+      // Puedes volver a llamar a fetchComentarios si deseas actualizar
+      fetchComentarios(); // Actualiza la lista de comentarios
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="arrow-left" size={25} color="#9FC63B" />
@@ -89,9 +146,66 @@ export function PublicacionScreen({ navigation, route }) {
           <Text style={styles.title}>{publicacion.titulo}</Text>
           <Text style={styles.description}>{publicacion.comentario}</Text>
           <Text style={styles.date}>{timeAgo(publicacion.createdAt)}</Text>
+
+          {/* Título de comentarios */}
+          <Text style={styles.commentsTitle}>COMENTARIOS</Text>
+
+          {/* Mostrar comentarios */}
+          {loading ? (
+            <ActivityIndicator size="large" color="#ffffff" />
+          ) : (
+            <FlatList
+              data={comentarios}
+              renderItem={({ item }) => (
+                <View style={styles.commentContainer}>
+                  <Text style={styles.commentUser}>{item.user}</Text>
+                  <Text style={styles.commentText}>{item.texto}</Text>
+                </View>
+              )}
+              keyExtractor={(item) => item.id.toString()}
+              ListEmptyComponent={<Text style={styles.noComments}>No hay comentarios aún.</Text>}
+            />
+          )}
         </View>
       </View>
-    </View>
+
+      <TouchableOpacity 
+        style={styles.floatingButton} 
+        onPress={() => setModalVisible(true)}
+      >
+        <Icon name="comment" size={30} color="#9FC63B" />
+      </TouchableOpacity>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Comentario:</Text>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Máx 500 caracteres"
+              placeholderTextColor="#888"
+              multiline
+              maxLength={500}
+              value={newComment}
+              onChangeText={setNewComment}
+            />
+            <View style={styles.modalButtonsContainer}>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>CANCELAR</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.publishButton} onPress={handlePublishComment}>
+                <Text style={styles.publishButtonText}>PUBLICAR</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </ScrollView>
   );
 }
 
@@ -171,4 +285,102 @@ const styles = StyleSheet.create({
     color: '#cccccc',
     marginTop: 10,
   },
+  commentsTitle: {
+    fontSize: 18,
+    color: '#9FC63B',
+    fontWeight: 'bold',
+    marginTop: 20,
+  },
+  commentContainer: {
+    marginBottom: 15,
+    backgroundColor: '#2f353a',
+    padding: 10,
+    borderRadius: 5,
+  },
+  commentUser: {
+    color: '#9FC63B',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  commentText: {
+    color: '#ffffff',
+    fontSize: 14,
+    marginTop: 5,
+  },
+  noComments: {
+    color: '#ffffff',
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  floatingButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: '#9FC63B',
+    borderRadius: 50,
+    padding: 10,
+    zIndex: 999,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.8)',
+  },
+  modalContent: {
+    width: '90%',
+    backgroundColor: '#2f353a',
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalTitle: {
+    color: '#9FC63B',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  textInput: {
+    height: 100,
+    backgroundColor: '#444',
+    color: '#fff',
+    padding: 10,
+    borderRadius: 5,
+    textAlignVertical: 'top',
+  },
+  modalButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: '#888',
+    padding: 10,
+    borderRadius: 5,
+    marginRight: 5,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  publishButton: {
+    flex: 1,
+    backgroundColor: '#9FC63B',
+    padding: 10,
+    borderRadius: 5,
+    marginLeft: 5,
+    alignItems: 'center',
+  },
+  publishButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
 });
+
+export default PublicacionScreen;
