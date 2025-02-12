@@ -5,7 +5,7 @@ import { auth } from '../../firebase-config';
 import { onAuthStateChanged } from 'firebase/auth';
 
 export function AddScreen() {
-  const [photoUri, setPhotoUri] = useState(null);
+  const [photoUri, setPhotoUri] = useState();
   const [postTitle, setPostTitle] = useState('');
   const [postDescription, setPostDescription] = useState('');
   const [apiEndpoint] = useState('http://192.168.1.147:8080/proyecto01/publicaciones');
