@@ -44,7 +44,7 @@ export function RegisterScreen({ navigation }) {
         apellidos: `${lastName1} ${lastName2}`,
       };
 
-      const response = await fetch('http://192.168.1.147:8080/proyecto01/users', {
+      const response = await fetch('http://192.168.1.38:8080/proyecto01/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

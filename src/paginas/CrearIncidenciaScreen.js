@@ -1,10 +1,37 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 
 export function CrearIncidenciaScreen() {
   const [equipo, setEquipo] = useState('');
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
+
+  const enviarIncidencia = () => {
+    const incidenciaData = {
+      equipo: equipo,
+      titulo: titulo,
+      descripcion: descripcion,
+    };
+
+    fetch('http://192.168.1.38:8080/proyecto01/tickets', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(incidenciaData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('Incidencia enviada:', data);
+        // Muestra un mensaje de éxito
+        Alert.alert('Éxito', 'La incidencia fue enviada correctamente');
+      })
+      .catch((err) => {
+        console.error('Error al enviar incidencia:', err);
+        // Muestra un mensaje de error
+        Alert.alert('Error', 'Hubo un error al enviar la incidencia');
+      });
+  };
 
   return (
     <View style={styles.container}>
@@ -37,7 +64,7 @@ export function CrearIncidenciaScreen() {
         placeholderTextColor="#888"
         multiline
       />
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={enviarIncidencia}>
         <Text style={styles.buttonText}>ENVIAR</Text>
       </TouchableOpacity>
     </View>

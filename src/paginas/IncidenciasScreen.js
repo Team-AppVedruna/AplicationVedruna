@@ -1,17 +1,22 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
-
-const incidencias = [
-  { id: '1', titulo: 'TÍTULO DE INCIDENCIA', estado: 'SOLUCIONADO', color: '#9FC63B' },
-  { id: '2', titulo: 'TÍTULO DE INCIDENCIA', estado: 'EN TRÁMITE', color: '#C1C1C1' },
-  { id: '3', titulo: 'TÍTULO DE INCIDENCIA', estado: 'DENEGADA', color: '#D9534F' },
-];
-
 export function IncidenciasScreen() {
-    const navigation = useNavigation();
+  const [incidencias, setIncidencias] = useState([]);
+  const navigation = useNavigation();
+
+ 
+  useEffect(() => {
+    fetch('http://192.168.1.38:8080/proyecto01/tickets')
+      .then(res => res.json())
+      .then(data => setIncidencias(data))
+      .catch(err => {
+        console.error('Error al obtener incidencias:', err);
+        Alert.alert('Error', 'Hubo un problema al cargar las incidencias');
+      });
+  }, []); 
 
   return (
     <View style={styles.container}>
@@ -22,12 +27,17 @@ export function IncidenciasScreen() {
         renderItem={({ item }) => (
           <View style={styles.card}>
             <Text style={styles.title}>{item.titulo}</Text>
-            <Text style={[styles.estado, { color: item.color }]}>{item.estado}</Text>
+            <Text style={[styles.estado, { color: item.color || '#9FC63B' }]}>
+              {item.estado || 'PENDIENTE'}
+            </Text>
           </View>
         )}
       />
-      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CrearIncidenciaScreen')}>
-      <Ionicons name="add" size={32} color="#23272A" />
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => navigation.navigate('CrearIncidenciaScreen')}
+      >
+        <Ionicons name="add" size={32} color="#23272A" />
       </TouchableOpacity>
     </View>
   );

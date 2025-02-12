@@ -15,7 +15,7 @@ export function HomeScreen() {
   // Obtiene los nombres de usuario a partir de sus IDs
   const fetchUserNicknames = async (userIds) => {
     try {
-      const response = await fetch('http://192.168.1.147:8080/proyecto01/users/name');
+      const response = await fetch('http://192.168.1.38:8080/proyecto01/users/name');
       const usersData = await response.json();
 
       const userNicknameMap = {};
@@ -34,7 +34,7 @@ export function HomeScreen() {
   // Obtiene las publicaciones desde la API y sus respectivos likes
   const fetchPublicaciones = async () => {
     try {
-      const url = 'http://192.168.1.147:8080/proyecto01/publicaciones';
+      const url = 'http://192.168.1.38:8080/proyecto01/publicaciones';
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Error al obtener publicaciones');
@@ -77,7 +77,7 @@ export function HomeScreen() {
 
       setPublicaciones(updatedPublicaciones);
 
-      const url = `http://192.168.1.147:8080/proyecto01/publicaciones/put/${id}/${userId}`;
+      const url = `http://192.168.1.38:8080/proyecto01/publicaciones/put/${id}/${userId}`;
       const response = await fetch(url, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },

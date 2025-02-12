@@ -8,7 +8,7 @@ export function AddScreen() {
   const [photoUri, setPhotoUri] = useState(null);
   const [postTitle, setPostTitle] = useState('');
   const [postDescription, setPostDescription] = useState('');
-  const [apiEndpoint] = useState('http://192.168.1.147:8080/proyecto01/publicaciones');
+  const [apiEndpoint] = useState('http://192.168.1.38:8080/proyecto01/publicaciones');
   const [currentUserId, setCurrentUserId] = useState(null);
 
   // Verifica el estado de autenticación del usuario
