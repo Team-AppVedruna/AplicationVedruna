@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,7 +9,7 @@ export function IncidenciasScreen() {
   const navigation = useNavigation();
 
   const fetchIncidencias = () => {
-    fetch('http://192.168.1.150:8080/proyecto01/tickets')
+    fetch('http://192.168.1.38:8080/proyecto01/tickets')
       .then(res => res.json())
       .then(data => setIncidencias(data))
       .catch(err => {
@@ -39,8 +40,8 @@ export function IncidenciasScreen() {
         renderItem={({ item }) => (
           <View style={styles.card}>
             <Text style={styles.title}>{item.titulo}</Text>
-            <Text style={[styles.estado, { color: item.color || '#9FC63B' }]}>
-              {item.estado || 'PENDIENTE'}
+            <Text style={[styles.estado, { color: item.color || '#F19100' }]}>
+              {item.estado || 'EN TRÁMITE'}
             </Text>
           </View>
         )}
