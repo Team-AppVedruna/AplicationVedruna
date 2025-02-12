@@ -34,7 +34,7 @@ export function IncidenciasScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>INCIDENCIAS</Text>
-      <FlatList
+      <FlatList 
         data={incidencias}
         keyExtractor={(item) => item.id.toString()} // Asegúrate de convertir a string
         renderItem={({ item }) => (
@@ -57,45 +57,49 @@ export function IncidenciasScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#1E1E1E',
-    padding: 20,
-  },
-  header: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#9FC63B',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  card: {
-    backgroundColor: '#323639',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#9FC63B',
-  },
-  estado: {
-    fontSize: 14,
-    marginTop: 5,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#9FC63B',
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 2, height: 2 },
-  },
-});
+    container: {
+      flex: 1,
+      backgroundColor: '#23272A',
+      padding: 20,
+      paddingTop: 60, 
+    },
+    header: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        color: '#9FC63B',
+        marginBottom: 10,
+        textAlign: 'center',
+    },
+    card: {
+      backgroundColor: '#323639',
+      padding: 18,
+      borderRadius: 20,
+      marginBottom: 10,
+      marginTop: 10,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: '#9FC63B',
+      textTransform: 'uppercase',
+
+    },
+    estado: {
+      fontSize: 14,
+      marginTop: 5,
+    },
+    fab: {
+      position: 'absolute',
+      bottom: 20,
+      right: 20,
+      backgroundColor: '#9FC63B',
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      justifyContent: 'center',
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOpacity: 0.3,
+      shadowOffset: { width: 2, height: 2 },
+    },
+  });
