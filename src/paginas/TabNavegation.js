@@ -7,6 +7,7 @@ import {IncidenciasScreen} from './IncidenciasScreen';
 import { PerfilScreen } from "./PerfilScreen.js";
 
 
+
 export function TabNavegation() {
   const Tab = createBottomTabNavigator();
   return (

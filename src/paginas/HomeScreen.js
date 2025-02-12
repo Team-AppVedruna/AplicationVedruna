@@ -103,7 +103,8 @@ export function HomeScreen() {
     };
     navigation.navigate('PublicacionScreen', { 
       publicacion: publicacionConNick,
-      onLikeUpdate: handleLike // Pasar la función de actualización
+      onLikeUpdate: handleLike,
+      selectedPostId: publicacionConNick.id // Pasa el id de la publicación
     });
   };
 
